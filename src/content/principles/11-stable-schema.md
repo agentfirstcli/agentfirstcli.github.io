@@ -16,42 +16,50 @@ This is the wrong mental model. Once a machine-readable format is published, it 
 ## The Anti-Pattern
 
 ```
-# docker inspect output, Docker 20.x
-$ docker inspect my-container | jq '.[0].NetworkSettings.Networks'
+# docker inspect output on one daemon version
+$ docker inspect my-container | jq '.[0].NetworkSettings.Networks.bridge'
 {
-  "bridge": {
-    "IPAddress": "172.17.0.2",
-    "Gateway": "172.17.0.1",
-    "MacAddress": "02:42:ac:11:00:02"
-  }
+  "IPAMConfig": null,
+  "Links": null,
+  "Aliases": null,
+  "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+  "EndpointID": "2cdc4edb1ded3631c81f57966563e5c8525b81121bb3706a9a9a3ae102711f3f",
+  "Gateway": "172.17.0.1",
+  "IPAddress": "172.17.0.2",
+  "IPPrefixLen": 16,
+  "IPv6Gateway": "",
+  "GlobalIPv6Address": "",
+  "GlobalIPv6PrefixLen": 0,
+  "MacAddress": "02:42:ac:11:00:02"
 }
 
-# Same command after a Docker daemon upgrade
-$ docker inspect my-container | jq '.[0].NetworkSettings.Networks'
+# Same logical query using Podman (a Docker-compatible runtime)
+$ podman inspect my-container | jq '.[0].NetworkSettings'
 {
-  "bridge": {
-    "IPAMConfig": null,
-    "Links": null,
-    "Aliases": null,
-    "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-    "EndpointID": "2cdc4edb1ded3631c81f57966563e5c8525b81121bb3706a9a9a3ae102711f3f",
-    "Gateway": "172.17.0.1",
-    "IPAddress": "172.17.0.2",
-    "IPPrefixLen": 16,
-    "IPv6Gateway": "",
-    "GlobalIPv6Address": "",
-    "GlobalIPv6PrefixLen": 0,
-    "MacAddress": "02:42:ac:11:00:02"
-  }
+  "EndpointID": "",
+  "Gateway": "",
+  "IPAddress": "",
+  "IPPrefixLen": 0,
+  "IPv6Gateway": "",
+  "GlobalIPv6Address": "",
+  "GlobalIPv6PrefixLen": 0,
+  "MacAddress": "",
+  "Bridge": "",
+  "SandboxID": "",
+  "HairpinMode": false,
+  "LinkLocalIPv6Address": "",
+  "LinkLocalIPv6PrefixLen": 0,
+  "Ports": {},
+  "SandboxKey": "/run/user/1000/netns/netns-c766254d-..."
 }
 ```
 
 What breaks here for an agent:
 
-- The second output contains `IPAddress` in the same location, so a simple lookup still works. But an agent checking `MacAddress` by position (not name) after iterating the object keys will now be reading the wrong field because key order changed.
-- The presence of `IPAMConfig: null` and `Links: null` means an agent checking `if .bridge.IPAMConfig` to detect a specific network configuration will now get a false positive on all containers, where before it got no result.
-- There is no version field in this output. An agent cannot tell whether it is reading Docker 20 format or Docker 24 format without knowing the daemon version through a separate call.
-- Fields like `NetworkID` and `EndpointID` that appear in the newer format are absent from the older one. Code written against the newer format will fail silently on older daemons.
+- Docker nests network info under `.NetworkSettings.Networks.bridge`. Podman puts fields directly under `.NetworkSettings` with no `Networks` key. An agent written for one runtime fails silently on the other because the path returns `null` instead of erroring.
+- New fields appear between versions (`IPAMConfig`, `Links`, `Aliases` in Docker; `HairpinMode`, `SandboxKey` in Podman). An agent checking `if .IPAMConfig` to detect a specific configuration will get `null` on Docker (field present but empty) and a missing key error on Podman.
+- There is no schema version field in either output. An agent cannot tell which format it is reading without checking the daemon type and version through a separate call.
+- Fields common to both (`IPAddress`, `Gateway`, `MacAddress`) live at different nesting depths. Code that works against one structure fails against the other.
 
 ## The Agent-First Way
 

@@ -26,7 +26,7 @@ sent 1,234 bytes  received 42 bytes  2,552.00 bytes/sec
 
 What breaks here for an agent:
 
-- `--dry-run` in older rsync versions did not faithfully simulate `--checksum` behavior. If you planned with `--dry-run --checksum` and then ran without `--dry-run`, rsync would transfer files the dry run said were identical, because the checksum logic ran differently in each code path.
+- `--dry-run` may not faithfully simulate `--checksum` behavior in all rsync versions. The checksum comparison logic can run differently in the dry-run code path than in the real transfer path, meaning a dry run may report files as identical that the real run would transfer. This class of bug (divergent code paths for simulation vs. execution) has been reported in rsync's issue tracker over the years.
 - The output includes a bandwidth summary ("sent 1,234 bytes") that refers to the dry-run metadata transfer, not the actual data that would be transferred. An agent reading this to estimate transfer size will be wrong by orders of magnitude.
 - Files that would be skipped due to filesystem permission errors during a real run may appear in dry-run output as though they will succeed. The permission check happens at write time, not at planning time.
 - No machine-readable format. The agent must parse the `>f+++++++++` prefix notation, which is documented but not versioned.

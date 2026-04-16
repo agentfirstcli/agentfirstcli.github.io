@@ -16,13 +16,6 @@ Flag names are a contract. Changing them, even for good reasons, breaks consumer
 ## The Anti-Pattern
 
 ```bash
-# Agent tool definition, written against Python 3.9
-python -u script.py
-
-# Python 3.12 deprecation warning appears in stderr:
-# DeprecationWarning: -u flag behavior changed in 3.12; 
-# unbuffered mode now applies only to binary streams.
-
 # Agent tool definition for a hypothetical log shipper v1.x
 log-ship --output /var/log/app.log --recursive
 
@@ -32,12 +25,13 @@ Error: unknown flag: --recursive
   Did you mean: --recurse?
 ```
 
+Note: the `log-ship` example above is hypothetical, but the pattern is real. Flag renames happen in real tools across minor or major versions. The illustrative example is used here to avoid misattributing this specific behavior to a named tool.
+
 What breaks here for an agent:
 
-- Python's `-u` flag semantics changed between versions without the flag being removed. The agent still passes `-u`, the command still succeeds, but the behavior is different. An agent relying on stdout being fully unbuffered may now see buffered output mid-stream without any error indicating a problem.
 - `--recursive` renamed to `--recurse` is a one-character change that sounds trivial but breaks every agent passing the old flag. The error message is helpful to a human who reads it; an agent parsing exit code and stderr gets an error it cannot recover from automatically.
-- Neither change appears in the tool's `--help` output for the old flag name. An agent has no way to discover that `--recursive` no longer works except by running it and failing.
-- When a flag's semantics change silently (as with `-u`), there is no error at all. The agent continues running, confident its configuration is correct, while producing subtly different behavior.
+- The old flag name does not appear in `--help` output. An agent has no way to discover that `--recursive` no longer works except by running it and failing.
+- Even worse than a rename is a silent semantic change: a flag keeps its name but does something different. There is no error at all. The agent continues running, confident its configuration is correct, while producing subtly different behavior. This is the hardest class of breakage to detect.
 
 ## The Agent-First Way
 

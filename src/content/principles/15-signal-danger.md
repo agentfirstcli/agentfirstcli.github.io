@@ -11,7 +11,7 @@ An agent issuing `rm -rf /var/data/uploads` and an agent issuing `ls /var/data/u
 
 When an agent runs inside an approval workflow, the human reviewer needs to know which operations are destructive without reading every command line character by character and maintaining their own mental list of dangerous patterns. When an agent has a dry-run mode, it needs to know which operations to simulate rather than execute. Both cases require the same thing: the tool declares its own danger level in machine-readable output, rather than relying on the caller to recognize the word "destroy" in a flag name.
 
-`terraform destroy` prints a warning in orange text. `kubectl delete deployment` asks "are you sure?" if you pass `--grace-period=0`. These are good UX for humans. They are invisible to agents, because an agent consuming structured output does not see terminal colors, and the interactive confirmation prompt blocks automation entirely.
+`terraform destroy` prints a warning in orange text and blocks on an interactive confirmation prompt. `kubectl delete namespace production` silently deletes everything in the namespace with no confirmation at all, returning only `namespace "production" deleted` and exit code 0. Both fail agents in different ways: one blocks automation, the other gives no machine-readable signal that a destructive operation just happened.
 
 ## The Anti-Pattern
 

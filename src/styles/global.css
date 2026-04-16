@@ -72,3 +72,16 @@ code {
   margin-bottom: 0.5rem;
   line-height: 1.7;
 }
+
+/* Links in markdown content */
+.prose a,
+article a {
+  color: var(--color-terminal-green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover,
+article a:hover {
+  color: var(--color-terminal-amber);
+}

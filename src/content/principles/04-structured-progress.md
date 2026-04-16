@@ -45,9 +45,9 @@ Problems here: the progress lines overwrite each other using `\r`, so captured o
 {"event":"pull_complete","image":"postgres:16","digest":"sha256:abc123","layers_total":6,"layers_downloaded":6,"timestamp":"2024-01-15T10:23:22Z"}
 ```
 
-Each line is a complete, parseable event. No line overwrites another. An agent can stream this and maintain a real-time model of progress. If the process dies after line 5, the agent knows layer `a378f10b3218` completed and `2a9e37a81c44` was 11% done. Recovery and retry logic can use that.
+Each line is a complete, parseable event. No line overwrites another. If the process dies after line 5, the agent knows layer `a378f10b3218` completed and `2a9e37a81c44` was 11% done. Recovery and retry logic can use that.
 
-The same principle applies to `npm install`: emit one JSON event per resolved package, with package name and version, rather than the scrolling dependency tree that npm currently renders.
+A word of caution: structured progress can easily conflict with [Principle 2 (Token Efficiency)](/principles/token-efficiency/). Per-layer, per-second progress events add up fast. A six-layer pull with percentage updates every second generates hundreds of JSON lines, most of which an agent will never act on. Progress events should be opt-in (a `--progress` or `--verbose-progress` flag), not bundled into the default `--json` output. When enabled, prefer milestone events (start, complete, error) over continuous percentage ticks. If you do emit percentage updates, throttle them: one event per 10% or per 5 seconds, not per byte received.
 
 ## For Tool Authors
 
@@ -58,6 +58,8 @@ First, emit to stdout, not stderr. Many agents capture stdout and discard stderr
 Second, do not suppress progress when output is not a TTY. The common pattern of "if not a TTY, show nothing" leaves agents with no progress information at all. Instead: if output is not a TTY (or a `--json` flag is set), switch from ANSI animations to newline-delimited JSON events. Terraform does this correctly when you set `TF_LOG` to `JSON`: every plan step becomes a structured log line rather than a colored box-drawing character.
 
 Include at minimum: `event` type, a stable resource or item identifier, completion percentage or bytes, and a timestamp. Percentage alone is rarely enough; agents also need to know which specific item is at that percentage so they can correlate failures to specific resources.
+
+Keep progress opt-in. Default `--json` output should contain only the final result. A separate `--progress` flag (or `--json --verbose`) enables the event stream. This respects Principle 2: agents that don't need progress shouldn't pay for it in tokens.
 
 ## For Agent Builders
 

@@ -38,10 +38,10 @@ The parameter MasterUserPassword is not a valid password.
   on main.tf line 94, in resource "aws_db_instance" "postgres":
   94: resource "aws_db_instance" "postgres"
 
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 7 added, 0 changed, 0 destroyed.
 ```
 
-Notice "Apply complete! Resources: 0 added." That is wrong; seven resources were created before the failure. The error message names the failing resource but says nothing about which resources succeeded. The agent cannot find that out without running `terraform state list`, a separate command that may itself fail if the state backend has issues. "Apply complete" is a lie that obscures what actually happened.
+Terraform does report the count of successfully created resources here (7 added), which is better than nothing. But the summary line is all an agent gets without running `terraform show -json` or `terraform state list` as separate commands. The error output names the single failing resource but says nothing about which specific seven resources succeeded or what their provider-side IDs are. An agent that needs to roll back those seven resources cannot derive that list from this output alone. It has to run additional commands against the state file, which may itself be locked or corrupted after a partial failure.
 
 ## The Agent-First Way
 

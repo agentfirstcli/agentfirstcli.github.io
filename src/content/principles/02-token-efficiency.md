@@ -52,16 +52,21 @@ In a CI pipeline with an agent orchestrating the build, this output is read, tok
 ```
 $ npm install --json 2>/dev/null
 {
-  "added": 847,
+  "added": 65,
   "removed": 0,
-  "changed": 12,
-  "audited": 848,
-  "funding": 193,
-  "vulnerabilities": {
-    "moderate": 2,
-    "high": 6
-  },
-  "elapsed": 34012
+  "changed": 0,
+  "audited": 66,
+  "funding": 22,
+  "audit": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  }
 }
 ```
 
@@ -69,9 +74,8 @@ What changed:
 
 - The entire output is one JSON object. An agent reads it in a single parse.
 - `added`, `removed`, `changed` tell the agent what happened to the dependency tree. An agent tracking reproducible builds can diff these values against expectations.
-- `vulnerabilities` is a map of severity to count. An agent enforcing security policy can check `high > 0` with one comparison.
-- Funding notices are absent. They were never signal.
-- The deprecation warnings are gone. If an agent needs them, it can request them explicitly.
+- `audit.vulnerabilities` breaks down by severity with numeric counts. An agent enforcing security policy can check `high > 0` with one comparison.
+- Funding notices are reduced to a count. The deprecation warnings are gone entirely. If an agent needs them, it can request them explicitly.
 
 `docker build` historically emitted layer output like `Step 4/12 : RUN apt-get install -y curl` followed by every line of apt-get output for every layer. `docker build --quiet` suppresses most of it and emits only the final image ID. That one flag can turn 300 lines into 1. The agent needed that image ID; everything else was noise.
 
