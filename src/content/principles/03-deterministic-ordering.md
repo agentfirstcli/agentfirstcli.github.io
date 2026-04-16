@@ -90,6 +90,8 @@ What changed:
 
 Sort all list output by a stable key before rendering. For resource lists, sort by name or identifier. For file lists, sort lexicographically. For dependency trees, sort by package name at each level. Do not leave ordering to map iteration, goroutine scheduling, or filesystem readdir order.
 
+If your output has a natural semantic order that differs from alphabetical (chronological logs, dependency-graph order, priority ranking), that is fine. The requirement is stability, not alphabetical sorting. The same inputs must produce the same order across runs. If you cannot guarantee stable ordering (e.g., results from a parallel backend), include the sort key or order basis as a field in the output so consumers can re-sort deterministically.
+
 When implementing `--output json`, apply the same sort. It is common to see tools that sort their human-readable table output but not their JSON output, on the assumption that JSON consumers will sort themselves. Do not make that assumption; agents pay a token cost to sort, and many will not bother.
 
 Document the sort order. If your tool sorts by name ascending, say so in the help text. If your JSON output is sorted, say so in the schema. An agent that knows the output is sorted can use binary search; an agent that does not know must sort defensively.

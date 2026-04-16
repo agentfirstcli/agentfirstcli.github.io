@@ -67,7 +67,9 @@ Terraform does report the count of successfully created resources here (7 added)
         "address": "aws_db_instance.postgres",
         "action": "create",
         "error": "InvalidParameterValue: MasterUserPassword is not a valid password",
-        "error_code": "InvalidParameterValue"
+        "error_code": "InvalidParameterValue",
+        "retryable": true,
+        "rollback_safe": false
       }
     ],
     "skipped": [

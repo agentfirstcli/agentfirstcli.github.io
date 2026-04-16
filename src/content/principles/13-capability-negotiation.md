@@ -102,6 +102,8 @@ Do not require the agent to reason about version numbers to infer capabilities. 
 
 Keep the capabilities response small enough to be useful as context. If the full capability graph is large, support filtering: `git capabilities rebase --output json` should return only rebase-related capabilities.
 
+To reduce maintenance burden, derive the capabilities output from the same source that defines your CLI's parser and command structure. If your flags are defined in a struct, config file, or decorator, generate the capabilities JSON from that definition. A hand-maintained capabilities endpoint will drift from reality within a few releases. A generated one stays in sync automatically.
+
 ## For Agent Builders
 
 Before using any version-gated feature, query the tool's capabilities if the tool supports it. Cache the response for the duration of the task (capabilities do not change mid-run). If the tool does not have a capabilities endpoint, document the minimum version required in your agent's code next to the call site, and add a version check at startup that fails loudly rather than silently using a flag that does not exist.

@@ -70,7 +70,7 @@ What changed:
 
 ## For Tool Authors
 
-Separate the concept of "operation performed" from "desired state achieved." A `create` command should succeed if the resource exists at the end of the call, whether or not this invocation was the one that created it. Return a `status` field that distinguishes `created`, `already_exists`, and `updated` for callers that need that information. Reserve non-zero exit codes for actual failures: the resource could not be created, permissions were denied, the request was invalid.
+Separate the concept of "operation performed" from "desired state achieved." Consider offering explicit convergent verbs: `apply`, `ensure`, or `upsert` for state-convergent operations, while keeping `create` for strict "create only" semantics. This avoids overloading `create` to mean both "fail if exists" and "ensure exists," which confuses both humans and agents. A `create` command should succeed if the resource exists at the end of the call, whether or not this invocation was the one that created it, or the tool should provide a separate `ensure` verb that does. Return a `status` field that distinguishes `created`, `already_exists`, and `updated` for callers that need that information. Reserve non-zero exit codes for actual failures: the resource could not be created, permissions were denied, the request was invalid.
 
 If a full idempotent mode is not feasible immediately, add a flag (`--if-not-exists`, `--idempotent`, `--ignore-existing`) that opts into convergence behavior. Make that flag the recommended default in your documentation for any automation use case.
 

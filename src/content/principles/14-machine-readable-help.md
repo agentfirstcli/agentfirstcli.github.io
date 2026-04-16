@@ -113,6 +113,8 @@ What changed:
 
 Add `--help --output json` (or `help <subcommand> --json`) that returns the flag schema as structured data. The minimum useful schema has: flag names (including all aliases), value type, whether the value is required or optional, allowed enum members if applicable, and a description string.
 
+For complex tools, go further. Include environment variables that affect behavior (`GIT_DIR`, `KUBECONFIG`), config file paths the tool reads, authentication prerequisites (which credentials or tokens are needed), mutually exclusive flags (passing `--json` and `--table` together is an error), implied defaults (what happens when a flag is omitted), and deprecation metadata (which flags are scheduled for removal). Syntax-correct commands are not enough; agents need enough context to construct workflow-correct commands.
+
 Do not generate this by parsing your own help text. Write the schema as data (a struct, a config file, whatever fits your build system) and derive both the human-readable help and the machine-readable output from the same source. This keeps them in sync automatically and eliminates the class of bug where `--help` documents a flag that was removed two versions ago.
 
 `kubectl explain` is a good model for resource schemas. Apply the same idea to flags.
