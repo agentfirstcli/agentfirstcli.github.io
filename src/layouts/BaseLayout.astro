@@ -11,16 +11,6 @@ interface Props {
 const { title, description = "16 principles for building CLIs that serve both humans and machines.", ogTitle, ogDescription } = Astro.props;
 const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First CLI`;
 
-let starCount: number | null = null;
-try {
-  const res = await fetch('https://api.github.com/repos/agentfirstcli/agentfirstcli.github.io', {
-    headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'agentfirstcli-site' },
-  });
-  if (res.ok) {
-    const data = await res.json();
-    starCount = data.stargazers_count;
-  }
-} catch {};
 ---
 
 <!doctype html>
@@ -61,9 +51,7 @@ try {
           >
             <span>★</span>
             <span>Star</span>
-            {starCount !== null && (
-              <span class="border-l border-terminal-border pl-1.5 text-terminal-text-secondary">{starCount}</span>
-            )}
+            <span id="star-count" class="border-l border-terminal-border pl-1.5 text-terminal-text-secondary hidden"></span>
           </a>
         </div>
       </div>
@@ -78,5 +66,16 @@ try {
         <p>CC BY 4.0 content · MIT code · <a href="https://github.com/agentfirstcli/agentfirstcli.github.io" class="text-terminal-green hover:underline">contribute on github</a></p>
       </div>
     </footer>
+    <script>
+      fetch('https://api.github.com/repos/agentfirstcli/agentfirstcli.github.io')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (d?.stargazers_count != null) {
+            const el = document.getElementById('star-count');
+            if (el) { el.textContent = String(d.stargazers_count); el.classList.remove('hidden'); }
+          }
+        })
+        .catch(() => {});
+    </script>
   </body>
 </html>
