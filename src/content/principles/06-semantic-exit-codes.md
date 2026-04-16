@@ -55,19 +55,22 @@ Consider `npm install` when a package is not found in the registry. It exits 1. 
 # A tool with semantic exit codes:
 $ deploy --env staging ./dist/
 
-# Exit codes:
-# 0: deployed successfully, no changes
-# 0: deployed successfully, changes applied (same as no-op? no - use different codes)
+# Three categories, matching the "For Tool Authors" guidance:
+# 0: success (includes "no changes needed" and "changes applied")
+# 1: caller error (bad flags, missing config, invalid input)
+# 2: environment error (network unreachable, auth failed, disk full)
+# 3: tool error (internal bug, missing dependency)
 
-# Better:
-# 0: success, nothing to do (already up to date)
-# 1: success, changes applied
-# 2: partial success, some targets failed (see stdout for details)
-# 3: validation error in inputs (bad flags, missing config)
-# 4: target unreachable (network, auth)
-# 5: target reachable but operation rejected (permissions, conflict)
-# 6: operation started but interrupted (partial state, needs inspection)
-# 127: tool misconfiguration (missing dependency, bad install)
+# For tools that need finer granularity within the success/failure
+# categories, extend within the category:
+# 0: success
+# 1: caller error (validation)
+# 2: environment error (transient, retryable)
+# 3: environment error (permanent, not retryable)
+# 4: partial success (some targets failed, see structured output)
+# 5: interrupted (operation started but did not complete)
+# 126-127: reserved by shell (command not executable / not found)
+# 128+N: reserved by shell (killed by signal N)
 ```
 
 ```json

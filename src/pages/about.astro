@@ -20,6 +20,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Agent-First CLI captures 15 principles for doing exactly that. It's a shared contract between CLI tool makers and the agent builders who consume their tools.
     </p>
 
+    <h2>What About MCP?</h2>
+    <p>
+      The Model Context Protocol (MCP) provides a structured interface specifically designed for agent-tool communication. If you are building a new tool from scratch and your primary consumer is an AI agent, an MCP server may be the better surface. But CLIs are not going away. Millions of existing tools speak CLI. Agents need to operate them today, not after a rewrite.
+    </p>
+    <p>
+      Agent-first CLI design and MCP are complementary, not competing. Principles 13 (Capability Negotiation) and 14 (Machine-Readable Help) describe patterns that are effectively lightweight MCP: queryable capabilities, typed flag schemas, structured output contracts. A CLI that follows these principles is one thin adapter layer away from also being an MCP server. Start with the CLI. If agent traffic grows, add an MCP interface that reuses the same structured output and capability metadata you already built.
+    </p>
+
     <h2>Contributing</h2>
     <p>
       This is an open project. If a principle is wrong, incomplete, or missing, open an issue or submit a PR.

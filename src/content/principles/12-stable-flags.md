@@ -66,7 +66,13 @@ Keep every flag you have ever shipped unless you are making a breaking major rel
 
 When a flag's semantics need to change, add a new flag with the new behavior and deprecate the old one rather than changing what the existing flag does. `--output-file` and `--output` can coexist. Changing what `--output` means is a breaking change even if the flag name stays the same.
 
-Emit deprecation warnings to stderr, not stdout. An agent parsing stdout for results should not see warning text mixed into its data. Include the flag name, the replacement, and the version in which the old flag will be removed: `deprecated: --recursive removed in v3.0, use --recurse`.
+Emit deprecation warnings to stderr as structured JSONL, not prose. An agent parsing stdout for results should not see warning text mixed into its data. A structured deprecation warning looks like:
+
+```json
+{"level":"warn","code":"FLAG_DEPRECATED","flag":"--recursive","replacement":"--recurse","removal_version":"3.0"}
+```
+
+This follows the cross-cutting rule (stdout = results, stderr = diagnostics) and lets agents detect scheduled removals programmatically. The same deprecation metadata should also appear in machine-readable help output (Principle 14), so agents can discover upcoming removals without triggering them.
 
 ## For Agent Builders
 

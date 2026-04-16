@@ -84,7 +84,7 @@ What changed:
 
 ## For Tool Authors
 
-Check `isatty(stdin)` at startup. If stdin is not a terminal, treat the session as non-interactive by default. Do not prompt. Either use documented defaults or exit immediately with a structured error listing the missing required values.
+Check `isatty(stdin)` at startup. Also respect established environment conventions: `CI=true` (widely used by CI systems to signal non-interactive context), `NO_COLOR` (no-color.org standard for disabling ANSI output), and `TERM=dumb` (minimal terminal). If any of these signals is present, treat the session as non-interactive by default. Do not prompt. Either use documented defaults or exit immediately with a structured error listing the missing required values.
 
 If a value has a sensible default, use it silently. If a value has no default and is required, fail with `E_REQUIRED_INPUT_MISSING` and enumerate the missing fields in the error payload. Never block waiting for input that will never arrive.
 

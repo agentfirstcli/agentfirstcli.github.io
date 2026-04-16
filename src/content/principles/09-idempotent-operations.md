@@ -76,6 +76,8 @@ If a full idempotent mode is not feasible immediately, add a flag (`--if-not-exi
 
 For `delete` operations, apply the same logic in reverse: deleting a resource that does not exist should exit 0. The desired state (resource absent) is already true. `kubectl delete pod foo --ignore-not-found=true` does this correctly.
 
+Some operations genuinely cannot be made idempotent: sending an email, charging a credit card, appending to an audit log. For these, support an `--idempotency-key <uuid>` flag. The tool stores the key and deduplicates within a defined window. If the same key is seen twice, return the original result with `"replayed": true` in the output instead of executing again. Stripe, AWS, and most payment APIs use this pattern; it works just as well for CLIs.
+
 Also consider providing a `--dry-run` mode that reports what would change without making changes. That lets agents check current state cheaply before deciding whether to act.
 
 ## For Agent Builders

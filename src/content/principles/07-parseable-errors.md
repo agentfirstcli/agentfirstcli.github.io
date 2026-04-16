@@ -72,7 +72,9 @@ What changed:
 
 ## For Tool Authors
 
-Emit JSON errors when stdout is not a terminal (`isatty(STDOUT_FILENO) == 0`), or when `--format json` (or equivalent) is passed. Allocate stable error codes early, even if the set is small to begin with. Treat them as part of your public API: changing a code is a breaking change.
+Emit JSON errors to stderr, not stdout. Stdout should carry only results (see the cross-cutting rule: stdout = results, stderr = diagnostics). When `--format json` or equivalent is active, errors on stderr should be JSONL so agents can parse them with the same tooling they use for progress and warnings.
+
+Allocate stable error codes early, even if the set is small to begin with. Treat them as part of your public API: changing a code is a breaking change. Use a namespaced convention to prevent collisions across tools: `tool.category.specific` (e.g., `pulumi.state.lock_held`, `terraform.provider.auth_failed`). Generic codes like `E_NOT_FOUND` will collide the moment an agent consumes two tools.
 
 Include `suggestions` as a list field, not interpolated prose. An agent receiving `["aws_subnet.public", "aws_subnet.private_2"]` can apply a suggestion programmatically. An agent receiving "did you mean aws_subnet.public or aws_subnet.private_2?" has to parse a sentence with ambiguous structure.
 

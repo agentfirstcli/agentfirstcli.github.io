@@ -53,7 +53,7 @@ A word of caution: structured progress can easily conflict with [Principle 2 (To
 
 Structured progress has two implementation constraints worth knowing up front.
 
-First, emit to stdout, not stderr. Many agents capture stdout and discard stderr. Progress events belong on stdout when `--json` or a structured mode flag is active.
+First, emit progress to stderr, not stdout. Stdout should carry only the final result. This keeps a clean separation: agents that pipe stdout to a JSON parser get results without type-discriminating every line. When `--json` or a structured mode flag is active, progress events on stderr should also be JSONL (not ANSI animations). Agents that want progress can read stderr; agents that only want results read stdout.
 
 Second, do not suppress progress when output is not a TTY. The common pattern of "if not a TTY, show nothing" leaves agents with no progress information at all. Instead: if output is not a TTY (or a `--json` flag is set), switch from ANSI animations to newline-delimited JSON events. Terraform does this correctly when you set `TF_LOG` to `JSON`: every plan step becomes a structured log line rather than a colored box-drawing character.
 
