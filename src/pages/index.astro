@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const principles = await getCollection('principles');
+const sorted = principles.sort((a, b) => a.data.number - b.data.number);
+
+const categories = [
+  { name: 'Output', principles: sorted.filter(p => p.data.category === 'Output') },
+  { name: 'Errors & Exit', principles: sorted.filter(p => p.data.category === 'Errors & Exit') },
+  { name: 'Behavior', principles: sorted.filter(p => p.data.category === 'Behavior') },
+  { name: 'Contracts & Stability', principles: sorted.filter(p => p.data.category === 'Contracts & Stability') },
+  { name: 'Discoverability', principles: sorted.filter(p => p.data.category === 'Discoverability') },
+  { name: 'Safety', principles: sorted.filter(p => p.data.category === 'Safety') },
+];
+---
+
+<BaseLayout title="Agent-First CLI">
+  <header class="mb-16">
+    <h1 class="font-mono text-4xl md:text-5xl font-bold text-terminal-text mb-3">
+      Agent-First CLI
+    </h1>
+    <p class="font-mono text-xl text-terminal-green italic mb-12">
+      Your next user won't have eyes.
+    </p>
+
+    <div class="text-lg leading-relaxed space-y-4 max-w-3xl">
+      <p>
+        <strong class="text-terminal-text">Agents are the new users of your CLI.</strong>
+      </p>
+      <p>
+        Every day, more software is operated by AI agents: deploying infrastructure, managing repos, orchestrating pipelines. These agents consume the same CLI tools humans do. But CLIs were designed for humans: colored output, interactive prompts, decorative tables, ambiguous errors.
+      </p>
+      <p>
+        This worked when every user had eyes and a keyboard. That era is ending.
+      </p>
+      <p>
+        Agent-First CLI is a set of 15 principles for building command-line tools that serve both humans and machines. Not instead of humans, alongside them. A CLI that follows these principles loses nothing for human users and gains an entire class of new consumers that can operate it reliably, efficiently, and safely.
+      </p>
+      <p>
+        The principles are a shared contract: for tool makers, a design checklist. For agent builders, a standard to reference and demand.
+      </p>
+    </div>
+  </header>
+
+  <section>
+    {categories.map((cat) => (
+      <div class="mb-12">
+        <h2 class="font-mono text-sm text-terminal-text-secondary uppercase tracking-wider mb-4">
+          {cat.name}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {cat.principles.map((p) => (
+            <a
+              href={`/principles/${p.id.replace(/^\d+-/, '').replace(/\.md$/, '')}/`}
+              class="block border border-terminal-border rounded-lg p-5 hover:border-terminal-green transition-colors group bg-terminal-surface"
+            >
+              <div class="font-mono text-terminal-amber text-sm mb-2">
+                {String(p.data.number).padStart(2, '0')}
+              </div>
+              <h3 class="font-mono font-semibold text-terminal-text group-hover:text-terminal-green transition-colors mb-2">
+                {p.data.title}
+              </h3>
+              <p class="text-sm text-terminal-text-secondary italic">
+                {p.data.tagline}
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</BaseLayout>
