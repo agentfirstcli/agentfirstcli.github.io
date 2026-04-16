@@ -1,5 +1,5 @@
 ---
-number: 15
+number: 16
 title: "Signal Danger"
 tagline: "Guardrails over good luck."
 category: "Safety"

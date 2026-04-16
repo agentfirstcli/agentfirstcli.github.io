@@ -1,5 +1,5 @@
 ---
-number: 13
+number: 14
 title: "Capability Negotiation"
 tagline: "Query over guess."
 category: "Contracts & Stability"

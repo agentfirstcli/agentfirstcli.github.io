@@ -1,5 +1,5 @@
 ---
-number: 12
+number: 13
 title: "Stable Flags"
 tagline: "Contract over changelog."
 category: "Contracts & Stability"
@@ -72,7 +72,7 @@ Emit deprecation warnings to stderr as structured JSONL, not prose. An agent par
 {"level":"warn","code":"FLAG_DEPRECATED","flag":"--recursive","replacement":"--recurse","removal_version":"3.0"}
 ```
 
-This follows the cross-cutting rule (stdout = results, stderr = diagnostics) and lets agents detect scheduled removals programmatically. The same deprecation metadata should also appear in machine-readable help output (Principle 14), so agents can discover upcoming removals without triggering them.
+This follows the cross-cutting rule (stdout = results, stderr = diagnostics) and lets agents detect scheduled removals programmatically. The same deprecation metadata should also appear in machine-readable help output (Principle 15), so agents can discover upcoming removals without triggering them.
 
 ## For Agent Builders
 

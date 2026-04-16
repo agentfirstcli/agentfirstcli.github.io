@@ -39,7 +39,7 @@ export const GET: APIRoute = async () => {
     version,
     last_modified: lastModified,
     url: "https://agentfirstcli.github.io",
-    description: "15 principles for building CLIs that serve both humans and machines.",
+    description: "16 principles for building CLIs that serve both humans and machines.",
     principles: sorted.map((p) => {
       const slug = p.id.replace(/^\d+-/, '').replace(/\.md$/, '');
       const filePath = `src/content/principles/${p.id}`;

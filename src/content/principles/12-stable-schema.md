@@ -1,5 +1,5 @@
 ---
-number: 11
+number: 12
 title: "Stable Schema"
 tagline: "Contract over convenience."
 category: "Contracts & Stability"
