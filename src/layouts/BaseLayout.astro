@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
   title: string;
   description?: string;
@@ -25,12 +27,13 @@ const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <title>{fullTitle}</title>
+    <ViewTransitions />
     <style is:global>
       @import "../styles/global.css";
     </style>
   </head>
   <body class="min-h-screen bg-terminal-bg text-terminal-text">
-    <nav class="border-b border-terminal-border">
+    <nav class="border-b border-terminal-border" transition:persist>
       <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" class="font-mono font-bold text-terminal-green hover:text-terminal-amber transition-colors">
           agent-first-cli
@@ -43,7 +46,7 @@ const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First 
       </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 py-12">
+    <main class="max-w-4xl mx-auto px-6 py-12" transition:animate="fade">
       <slot />
     </main>
 

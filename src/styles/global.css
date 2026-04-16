@@ -64,13 +64,61 @@ code {
 }
 
 .prose ul, .prose ol {
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding-left: 0;
+  list-style: none;
 }
 
-.prose li {
-  margin-bottom: 0.5rem;
+.prose ul > li,
+.prose ol > li {
+  margin-bottom: 0.625rem;
   line-height: 1.7;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+/* Unordered: terminal-style dash markers in green */
+.prose ul > li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--color-terminal-green);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+/* Ordered: amber monospace counters */
+.prose ol {
+  counter-reset: ol-counter;
+}
+
+.prose ol > li {
+  counter-increment: ol-counter;
+}
+
+.prose ol > li::before {
+  content: counter(ol-counter) ".";
+  position: absolute;
+  left: 0;
+  color: var(--color-terminal-amber);
+  font-family: var(--font-mono);
+  font-size: 0.8125em;
+  font-weight: 500;
+}
+
+/* Nested lists: secondary marker, tighter spacing */
+.prose ul ul > li::before,
+.prose ol ul > li::before {
+  content: "›";
+  color: var(--color-terminal-text-secondary);
+}
+
+.prose ul ul,
+.prose ol ul,
+.prose ul ol,
+.prose ol ol {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
 }
 
 /* Links in markdown content */
