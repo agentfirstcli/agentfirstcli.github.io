@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import PrincipleLayout from '../../layouts/PrincipleLayout.astro';
+
+export async function getStaticPaths() {
+  const principles = await getCollection('principles');
+  return principles.map((entry) => ({
+    params: { slug: entry.id.replace(/^\d+-/, '').replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<PrincipleLayout
+  number={entry.data.number}
+  title={entry.data.title}
+  tagline={entry.data.tagline}
+  category={entry.data.category}
+  slug={entry.id.replace(/^\d+-/, '').replace(/\.md$/, '')}
+>
+  <Content />
+</PrincipleLayout>

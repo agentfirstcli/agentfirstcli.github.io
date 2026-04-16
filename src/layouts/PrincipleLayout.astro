@@ -1,0 +1,60 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  number: number;
+  title: string;
+  tagline: string;
+  category: string;
+  slug: string;
+}
+
+const { number, title, tagline, category, slug } = Astro.props;
+
+const allPrinciples = await getCollection('principles');
+const sorted = allPrinciples.sort((a, b) => a.data.number - b.data.number);
+const currentIndex = sorted.findIndex((p) => p.data.number === number);
+const prev = currentIndex > 0 ? sorted[currentIndex - 1] : null;
+const next = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
+
+const description = `Principle ${number}: ${title}. ${tagline}`;
+---
+
+<BaseLayout title={`${number}. ${title}`} description={description}>
+  <article>
+    <header class="mb-12">
+      <div class="font-mono text-sm text-terminal-text-secondary mb-2">
+        <a href="/" class="hover:text-terminal-green transition-colors">principles</a>
+        <span class="mx-2">/</span>
+        <span class="text-terminal-amber">{category.toLowerCase()}</span>
+      </div>
+      <div class="font-mono text-terminal-text-secondary text-lg mb-2">
+        {String(number).padStart(2, '0')}
+      </div>
+      <h1 class="font-mono text-3xl font-bold text-terminal-text mb-3">
+        {title}
+      </h1>
+      <p class="font-mono text-xl text-terminal-green italic">
+        {tagline}
+      </p>
+    </header>
+
+    <div class="prose max-w-none">
+      <slot />
+    </div>
+
+    <nav class="mt-16 pt-8 border-t border-terminal-border flex justify-between font-mono text-sm">
+      {prev ? (
+        <a href={`/principles/${prev.id.replace(/^\d+-/, '').replace(/\.md$/, '')}/`} class="text-terminal-text-secondary hover:text-terminal-green transition-colors">
+          ← {String(prev.data.number).padStart(2, '0')}. {prev.data.title}
+        </a>
+      ) : <span />}
+      {next ? (
+        <a href={`/principles/${next.id.replace(/^\d+-/, '').replace(/\.md$/, '')}/`} class="text-terminal-text-secondary hover:text-terminal-green transition-colors">
+          {String(next.data.number).padStart(2, '0')}. {next.data.title} →
+        </a>
+      ) : <span />}
+    </nav>
+  </article>
+</BaseLayout>
