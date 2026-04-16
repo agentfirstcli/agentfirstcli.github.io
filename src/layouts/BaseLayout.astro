@@ -10,6 +10,17 @@ interface Props {
 
 const { title, description = "16 principles for building CLIs that serve both humans and machines.", ogTitle, ogDescription } = Astro.props;
 const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First CLI`;
+
+let starCount: number | null = null;
+try {
+  const res = await fetch('https://api.github.com/repos/agentfirstcli/agentfirstcli.github.io', {
+    headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'agentfirstcli-site' },
+  });
+  if (res.ok) {
+    const data = await res.json();
+    starCount = data.stargazers_count;
+  }
+} catch {};
 ---
 
 <!doctype html>
@@ -50,6 +61,9 @@ const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First 
           >
             <span>★</span>
             <span>Star</span>
+            {starCount !== null && (
+              <span class="border-l border-terminal-border pl-1.5 text-terminal-text-secondary">{starCount}</span>
+            )}
           </a>
         </div>
       </div>
