@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terminal-bg: #0d1117;
+  --color-terminal-surface: #161b22;
+  --color-terminal-border: #30363d;
+  --color-terminal-text: #c9d1d9;
+  --color-terminal-text-secondary: #848d97;
+  --color-terminal-green: #7ee787;
+  --color-terminal-amber: #ffa657;
+  --color-terminal-blue: #79c0ff;
+  --color-terminal-red: #ff7b72;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background-color: var(--color-terminal-bg);
+  color: var(--color-terminal-text);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-terminal-green);
+  color: var(--color-terminal-bg);
+}
+
+/* Code blocks */
+pre {
+  background-color: var(--color-terminal-surface) !important;
+  border: 1px solid var(--color-terminal-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+:not(pre) > code {
+  background-color: var(--color-terminal-surface);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  border: 1px solid var(--color-terminal-border);
+}
+
+/* Prose styling for principle content */
+.prose h2 {
+  font-family: var(--font-mono);
+  color: var(--color-terminal-green);
+  font-size: 1.25rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose p {
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}

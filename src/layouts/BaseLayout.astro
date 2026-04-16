@@ -1,0 +1,56 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}
+
+const { title, description = "15 principles for building CLIs that serve both humans and machines.", ogTitle, ogDescription } = Astro.props;
+const fullTitle = title === "Agent-First CLI" ? title : `${title} | Agent-First CLI`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={ogTitle || fullTitle} />
+    <meta property="og:description" content={ogDescription || description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <title>{fullTitle}</title>
+    <style>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body class="min-h-screen bg-terminal-bg text-terminal-text">
+    <nav class="border-b border-terminal-border">
+      <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="font-mono font-bold text-terminal-green hover:text-terminal-amber transition-colors">
+          agent-first-cli
+        </a>
+        <div class="flex gap-6 font-mono text-sm">
+          <a href="/" class="text-terminal-text-secondary hover:text-terminal-text transition-colors">principles</a>
+          <a href="/about" class="text-terminal-text-secondary hover:text-terminal-text transition-colors">about</a>
+          <a href="https://github.com/agentfirstcli/agentfirstcli.github.io" class="text-terminal-text-secondary hover:text-terminal-text transition-colors">github</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+      <slot />
+    </main>
+
+    <footer class="border-t border-terminal-border mt-20">
+      <div class="max-w-4xl mx-auto px-6 py-8 text-center text-terminal-text-secondary text-sm font-mono">
+        <p>CC BY 4.0 content · MIT code · <a href="https://github.com/agentfirstcli/agentfirstcli.github.io" class="text-terminal-green hover:underline">contribute on github</a></p>
+      </div>
+    </footer>
+  </body>
+</html>
