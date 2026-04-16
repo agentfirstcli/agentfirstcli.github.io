@@ -57,6 +57,11 @@ Run your dry-run and real-run through the same execution path. The only differen
 
 Test this explicitly: run dry-run on a known fixture, capture its output, run the real operation, and verify the results match what dry-run predicted. Do this in CI. Any gap between prediction and outcome is a bug in the dry-run implementation.
 
+Not all dry runs are equal, and agents need to know what they're getting. Declare the fidelity level of your dry run in the structured output:
+
+- `"dry_run_level": "syntax"` means local validation only (input parsing, flag checking, config loading). No network calls, no state checks. Fast and safe, but cannot catch permission errors, resource conflicts, or constraint violations.
+- `"dry_run_level": "state"` means the tool queried live state (checked the API, read the database, verified permissions) but did not mutate anything. This is what `terraform plan` does. Higher fidelity, but may hit rate limits or require credentials.
+
 If your operation has side effects that genuinely cannot be simulated (a third-party API that provides no sandbox mode, for example), say so in the dry-run output with a machine-readable field: `"unsimulated": true`. An agent can then factor that uncertainty into its decision rather than trusting a guarantee you cannot keep.
 
 Emit dry-run results in the same structured format as real results. An agent should be able to use the same parsing logic for both.

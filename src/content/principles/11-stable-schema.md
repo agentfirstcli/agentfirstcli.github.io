@@ -90,6 +90,8 @@ No tool gets this perfectly right. The model is: version the schema, document wh
 
 Add a `schemaVersion` field to your JSON output. Start at `1`. Increment it when you make any change that removes a field, renames a field, changes a field's type, or reorganizes nesting. Additive changes (new optional fields) do not require a version bump but should be documented.
 
+For tools that evolve quickly, consider supporting an explicit version flag: `--api-version=2024-04-16` or `--schema=v2`. This lets the CLI iterate freely on its output format while giving agents a frozen contract they can pin to. Stripe's API versioning works this way: every request specifies which version of the response format it expects, and the server translates. The same pattern works for CLI output.
+
 Keep old schema versions working for at least two major releases. If you need to remove a field, mark it deprecated first: include it in output alongside the new field, and document the timeline for removal. Agents can then detect the deprecated field and warn their operators.
 
 Do not reorganize your output structure for cosmetic reasons. Renaming `container_id` to `containerId` for style consistency is a breaking change. Every agent parsing your output by field name will fail.

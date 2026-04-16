@@ -13,6 +13,8 @@ The same applies to `ansible-playbook` across a fleet of servers. If 40 of 50 ho
 
 Partial failure output is not about being nice. It is about making recovery possible at all.
 
+A caveat: if you can make the operation atomic, do that first. Partial failure reporting is for operations that are inherently non-atomic (multi-resource infrastructure deploys, batch file uploads, fleet-wide configuration pushes). If your tool can roll back on failure and leave zero side effects, atomicity is strictly better than partial failure reporting. This principle applies when atomicity is not possible.
+
 ## The Anti-Pattern
 
 ```

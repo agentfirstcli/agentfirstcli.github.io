@@ -108,7 +108,7 @@ Every operation your tool exposes should carry a danger classification in its st
 
 Separate the concepts of "dry run" and "require approval." Dry run means simulate. Require approval means pause for confirmation before executing. Both should be expressible as flags and both should be reflected in the structured output so upstream systems can act on them. Do not conflate them by making `--dry-run` the only way to avoid automatic execution.
 
-If your tool must prompt for confirmation, support a `--confirm-token <token>` pattern: the first call returns a token and danger metadata, and the second call passes the token to actually execute. This gives approval workflows a clean integration point.
+If your tool must prompt for confirmation, support a `--confirm-token <token>` pattern: the dry-run or plan call returns a one-time token (e.g., `"confirm_token": "8f3a9b"`) alongside the danger metadata. The agent must pass this token to the real execution call (`--confirm=8f3a9b`). This mechanically forces the agent to read the danger output before it can execute, because the token only exists in that output. No amount of sycophancy or task-obsession lets the agent skip the safety check; it physically cannot construct the execution command without parsing the plan first. This gives approval workflows a clean integration point and makes safety a protocol constraint, not a behavioral suggestion.
 
 ## For Agent Builders
 
